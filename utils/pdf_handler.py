@@ -12,7 +12,9 @@ class PDFHandler:
             df = df.rename(columns={mail[0]: 'Company Name',mail[1]: 'Email ID', mail[2]: mail[2]})
             df.loc[len(df)] = mail
             main_df = pd.concat([main_df, df])
-        return main_df[['Company Name', 'Email ID']]
+        main_df = main_df[['Company Name', 'Email ID']]
+        main_df["Email ID"] = main_df["Email ID"].apply(lambda x: x.split(",")[0])
+        return main_df
     
     def save_data(self, data):
         data.to_csv("data.csv", index=False)
