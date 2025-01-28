@@ -1,7 +1,9 @@
-from email.mime.application import MIMEApplication
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import os
 import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+
 
 class EmailSender:
 
@@ -9,7 +11,7 @@ class EmailSender:
         self.email = email
         self.__password = password
         self._server = self.connect_to_server()
-    
+
     def connect_to_server(self):
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
@@ -25,13 +27,14 @@ class EmailSender:
         msg['To'] = receiver_email
         msg['Subject'] = subject
         msg.attach(MIMEText(message, "plain"))
-        
+
         if pdf:
             with open(pdf, "rb") as attachment:
                 pdf_part = MIMEApplication(attachment.read(), _subtype="pdf")
-                pdf_part.add_header("Content-Disposition", f"attachment; filename= {os.path.basename(pdf)}")
+                pdf_part.add_header(
+                    "Content-Disposition", f"attachment; filename= {os.path.basename(pdf)}")
                 msg.attach(pdf_part)
-        
+
         try:
             self._server.sendmail(self.email, receiver_email, msg.as_string())
             return 0
@@ -51,4 +54,5 @@ if __name__ == "__main__":
     load_dotenv()
 
     send_email = EmailSender(EMAIL, PASSWORD)
-    send_email("mrintrovert.730@gmail.com", MAIL_SUBJECT, MAIL_BODY, pdf="Resume - Parampreet Singh.pdf")
+    send_email("abcdefgh@gmail.com", MAIL_SUBJECT, MAIL_BODY,
+               pdf="Resume - Parampreet Singh.pdf")
