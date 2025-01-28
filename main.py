@@ -70,6 +70,7 @@ class AutoMailSender:
                 self._reader = self._load_csv(filepath)
             records = self._get_records(n)
         print(records)
+
         for record in records:
             company, email = record
             if self.is_hr_mail(email):
@@ -91,9 +92,9 @@ class AutoMailSender:
         self._reader.close()
         self._reader = None
         del self.mail_sender
-    
+
     @classmethod
-    def close(cls): # Calls __del__ method
+    def close(cls):  # Calls __del__ method
         del cls
 
 
