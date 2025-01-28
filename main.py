@@ -87,10 +87,14 @@ class AutoMailSender:
             print(f"Mail sent to {email} with subject: {subject}")
             time.sleep(delay)
 
-    def close(self):
+    def __del__(self):
         self._reader.close()
         self._reader = None
-        # self.mail_sender._server.quit()
+        del self.mail_sender
+    
+    @classmethod
+    def close(cls): # Calls __del__ method
+        del cls
 
 
 if __name__ == "__main__":

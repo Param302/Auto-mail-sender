@@ -19,6 +19,7 @@ class EmailSender:
         return server
 
     def __call__(self, receiver_email, subject, message, pdf=None):
+        #! Handle if receiver_email address not found
         if not self._server:
             self._server = self.connect_to_server()
 
@@ -41,7 +42,9 @@ class EmailSender:
         except Exception as e:
             print(f"Error: {e}")
             return 1
-
+    
+    def __del__(self):
+        self._server.quit()
 
 if __name__ == "__main__":
     import os
