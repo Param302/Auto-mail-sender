@@ -1,5 +1,7 @@
 import os
+import re
 import smtplib
+import dns.resolver
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
@@ -18,8 +20,15 @@ class EmailSender:
         server.login(self.email, self.__password)
         return server
 
+    def _is_valid_email(self, email):
+        pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        return re.match(pattern, email) is not None
+
     def __call__(self, receiver_email, subject, message, pdf=None):
-        #! Handle if receiver_email address not found
+        if not self._is_valid_email(receiver_email):
+            print(f"Invalid email address: {receiver_email}")
+            return -1
+
         if not self._server:
             self._server = self.connect_to_server()
 
@@ -42,20 +51,21 @@ class EmailSender:
         except Exception as e:
             print(f"Error: {e}")
             return 1
-    
+
     def __del__(self):
         self._server.quit()
+
 
 if __name__ == "__main__":
     import os
     from dotenv import load_dotenv
     EMAIL = os.getenv("EMAIL")
     PASSWORD = os.getenv("PASSWORD")
-    MAIL_SUBJECT = os.getenv("HR_SUBJECT1")
-    MAIL_BODY = os.getenv("REFERRAL_BODY1")
+    MAIL_SUBJECT = os.getenv("HR_SUBJECT_1")
+    MAIL_BODY = os.getenv("REFERRAL_BODY_1")
     print(EMAIL, PASSWORD, MAIL_SUBJECT, MAIL_BODY)
     load_dotenv()
 
     send_email = EmailSender(EMAIL, PASSWORD)
-    send_email("abcdefgh@gmail.com", MAIL_SUBJECT, MAIL_BODY,
+    send_email("abcd.efgh+123@gmail.com", MAIL_SUBJECT, MAIL_BODY,
                pdf="Resume - Parampreet Singh.pdf")
